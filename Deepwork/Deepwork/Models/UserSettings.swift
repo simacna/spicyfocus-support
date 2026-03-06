@@ -14,6 +14,8 @@ final class UserSettings: ObservableObject {
         static let prefersDarkMode = "prefersDarkMode"
         static let timerEndTime = "timerEndTime"
         static let timerPlannedDuration = "timerPlannedDuration"
+        static let timerStartTime = "timerStartTime"
+        static let timerIsStopwatch = "timerIsStopwatch"
         // Goals
         static let dailyGoalMinutes = "dailyGoalMinutes"
         static let goalsEnabled = "goalsEnabled"
@@ -30,6 +32,17 @@ final class UserSettings: ObservableObject {
         static let hasCompletedOnboarding = "hasCompletedOnboarding"
         static let completedSessionCount = "completedSessionCount"
         static let hasSeenProUpsell = "hasSeenProUpsell"
+        // Reminders
+        static let reminderEnabled = "reminderEnabled"
+        static let reminderTime = "reminderTime"
+        // XP
+        static let totalXP = "totalXP"
+        static let currentLevel = "currentLevel"
+        // Hyperfocus Nudge
+        static let hyperfocusNudgeEnabled = "hyperfocusNudgeEnabled"
+        static let hyperfocusNudgeIntervalMinutes = "hyperfocusNudgeIntervalMinutes"
+        // Grace Days
+        static let graceDaysPerWeek = "graceDaysPerWeek"
         // Trial
         static let firstLaunchDate = "firstLaunchDate"
     }
@@ -60,6 +73,42 @@ final class UserSettings: ObservableObject {
 
     @Published var prefersDarkMode: Bool {
         didSet { defaults.set(prefersDarkMode, forKey: Keys.prefersDarkMode) }
+    }
+
+    // MARK: - Reminders
+
+    @Published var reminderEnabled: Bool {
+        didSet { defaults.set(reminderEnabled, forKey: Keys.reminderEnabled) }
+    }
+
+    @Published var reminderTime: Date {
+        didSet { defaults.set(reminderTime, forKey: Keys.reminderTime) }
+    }
+
+    // MARK: - XP
+
+    @Published var totalXP: Int {
+        didSet { defaults.set(totalXP, forKey: Keys.totalXP) }
+    }
+
+    @Published var currentLevel: Int {
+        didSet { defaults.set(currentLevel, forKey: Keys.currentLevel) }
+    }
+
+    // MARK: - Hyperfocus Nudge
+
+    @Published var hyperfocusNudgeEnabled: Bool {
+        didSet { defaults.set(hyperfocusNudgeEnabled, forKey: Keys.hyperfocusNudgeEnabled) }
+    }
+
+    @Published var hyperfocusNudgeIntervalMinutes: Int {
+        didSet { defaults.set(hyperfocusNudgeIntervalMinutes, forKey: Keys.hyperfocusNudgeIntervalMinutes) }
+    }
+
+    // MARK: - Grace Days
+
+    @Published var graceDaysPerWeek: Int {
+        didSet { defaults.set(graceDaysPerWeek, forKey: Keys.graceDaysPerWeek) }
     }
 
     // MARK: - Goals
@@ -153,6 +202,16 @@ final class UserSettings: ObservableObject {
         set { defaults.set(newValue, forKey: Keys.timerPlannedDuration) }
     }
 
+    var timerStartTime: Date? {
+        get { defaults.object(forKey: Keys.timerStartTime) as? Date }
+        set { defaults.set(newValue, forKey: Keys.timerStartTime) }
+    }
+
+    var timerIsStopwatch: Bool {
+        get { defaults.bool(forKey: Keys.timerIsStopwatch) }
+        set { defaults.set(newValue, forKey: Keys.timerIsStopwatch) }
+    }
+
     init() {
         self.defaultDuration = defaults.object(forKey: Keys.defaultDuration) as? Int ?? Constants.Timer.defaultDuration
         self.customDurations = defaults.object(forKey: Keys.customDurations) as? [Int] ?? Constants.Timer.defaultDurations
@@ -161,6 +220,25 @@ final class UserSettings: ObservableObject {
         self.hapticEnabled = defaults.object(forKey: Keys.hapticEnabled) as? Bool ?? true
         self.notificationsEnabled = defaults.object(forKey: Keys.notificationsEnabled) as? Bool ?? true
         self.prefersDarkMode = defaults.object(forKey: Keys.prefersDarkMode) as? Bool ?? true
+        // XP
+        self.totalXP = defaults.object(forKey: Keys.totalXP) as? Int ?? 0
+        self.currentLevel = defaults.object(forKey: Keys.currentLevel) as? Int ?? 1
+        // Reminders
+        self.reminderEnabled = defaults.object(forKey: Keys.reminderEnabled) as? Bool ?? false
+        if let savedTime = defaults.object(forKey: Keys.reminderTime) as? Date {
+            self.reminderTime = savedTime
+        } else {
+            // Default to 9:00 AM
+            var components = Calendar.current.dateComponents([.year, .month, .day], from: Date())
+            components.hour = 9
+            components.minute = 0
+            self.reminderTime = Calendar.current.date(from: components) ?? Date()
+        }
+        // Hyperfocus Nudge
+        self.hyperfocusNudgeEnabled = defaults.object(forKey: Keys.hyperfocusNudgeEnabled) as? Bool ?? false
+        self.hyperfocusNudgeIntervalMinutes = defaults.object(forKey: Keys.hyperfocusNudgeIntervalMinutes) as? Int ?? 30
+        // Grace Days
+        self.graceDaysPerWeek = defaults.object(forKey: Keys.graceDaysPerWeek) as? Int ?? 1
         // Goals
         self.dailyGoalMinutes = defaults.object(forKey: Keys.dailyGoalMinutes) as? Int ?? 120
         self.goalsEnabled = defaults.object(forKey: Keys.goalsEnabled) as? Bool ?? true
@@ -204,5 +282,7 @@ final class UserSettings: ObservableObject {
     func clearTimerState() {
         timerEndTime = nil
         timerPlannedDuration = 0
+        timerStartTime = nil
+        timerIsStopwatch = false
     }
 }

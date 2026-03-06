@@ -11,6 +11,14 @@ final class FocusSession {
     var label: String
     var notes: String
     var wasCompleted: Bool
+    var energyLevelRaw: String = ""
+    var intention: String = ""
+    var intentionCompleted: Bool = false
+
+    var energy: EnergyLevel {
+        get { EnergyLevel(rawValue: energyLevelRaw) ?? .notRated }
+        set { energyLevelRaw = newValue.rawValue }
+    }
 
     init(
         id: UUID = UUID(),
@@ -20,7 +28,10 @@ final class FocusSession {
         actualDuration: Int,
         label: String = "",
         notes: String = "",
-        wasCompleted: Bool = true
+        wasCompleted: Bool = true,
+        energyLevel: EnergyLevel = .notRated,
+        intention: String = "",
+        intentionCompleted: Bool = false
     ) {
         self.id = id
         self.startTime = startTime
@@ -30,6 +41,9 @@ final class FocusSession {
         self.label = label
         self.notes = notes
         self.wasCompleted = wasCompleted
+        self.energyLevelRaw = energyLevel.rawValue
+        self.intention = intention
+        self.intentionCompleted = intentionCompleted
     }
 
     var plannedMinutes: Int {
@@ -54,7 +68,8 @@ extension FocusSession {
             plannedDuration: 1500,
             actualDuration: 1500,
             label: "Deep Work",
-            wasCompleted: true
+            wasCompleted: true,
+            energyLevel: .high
         )
     }
 
@@ -66,7 +81,8 @@ extension FocusSession {
                 plannedDuration: 1500,
                 actualDuration: 1500,
                 label: "Deep Work",
-                wasCompleted: true
+                wasCompleted: true,
+                energyLevel: .high
             ),
             FocusSession(
                 startTime: Date().addingTimeInterval(-7200),
@@ -74,7 +90,8 @@ extension FocusSession {
                 plannedDuration: 2700,
                 actualDuration: 2700,
                 label: "Study",
-                wasCompleted: true
+                wasCompleted: true,
+                energyLevel: .medium
             ),
             FocusSession(
                 startTime: Date().addingTimeInterval(-86400 - 1800),
@@ -82,7 +99,8 @@ extension FocusSession {
                 plannedDuration: 1500,
                 actualDuration: 900,
                 label: "Writing",
-                wasCompleted: false
+                wasCompleted: false,
+                energyLevel: .low
             )
         ]
     }

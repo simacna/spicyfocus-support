@@ -24,6 +24,8 @@ struct StreakInfo {
     let todayProgress: DayProgress
     let streakFreezeAvailable: Bool
     let streakFreezeUsedToday: Bool
+    let graceDaysUsedThisWeek: Int
+    let graceDaysRemaining: Int
 }
 
 struct PersonalRecords {
@@ -59,23 +61,47 @@ final class StreakService: @unchecked Sendable {
         )
     }
 
-    func calculateStreakInfo(sessions: [FocusSession], goalMinutes: Int) -> StreakInfo {
+    func calculateStreakInfo(sessions: [FocusSession], goalMinutes: Int, graceDaysPerWeek: Int = 0) -> StreakInfo {
         let today = calendar.startOfDay(for: Date())
         let todayProgress = calculateDayProgress(for: today, sessions: sessions, goalMinutes: goalMinutes)
 
         // Calculate streaks from session data
-        let (currentStreak, longestStreak) = calculateStreaks(sessions: sessions, goalMinutes: goalMinutes)
+        let (currentStreak, longestStreak) = calculateStreaks(sessions: sessions, goalMinutes: goalMinutes, graceDaysPerWeek: graceDaysPerWeek)
+
+        // Calculate grace days used in current rolling 7-day window
+        let graceDaysUsed = calculateGraceDaysUsedThisWeek(sessions: sessions, goalMinutes: goalMinutes)
+        let graceDaysRemaining = max(0, graceDaysPerWeek - graceDaysUsed)
 
         return StreakInfo(
             currentStreak: currentStreak,
             longestStreak: longestStreak,
             todayProgress: todayProgress,
             streakFreezeAvailable: false,
-            streakFreezeUsedToday: false
+            streakFreezeUsedToday: false,
+            graceDaysUsedThisWeek: graceDaysUsed,
+            graceDaysRemaining: graceDaysRemaining
         )
     }
 
-    private func calculateStreaks(sessions: [FocusSession], goalMinutes: Int) -> (current: Int, longest: Int) {
+    private func calculateGraceDaysUsedThisWeek(sessions: [FocusSession], goalMinutes: Int) -> Int {
+        let today = calendar.startOfDay(for: Date())
+        var graceDaysUsed = 0
+
+        // Look at the past 7 days (not including today)
+        for dayOffset in 1...7 {
+            guard let date = calendar.date(byAdding: .day, value: -dayOffset, to: today) else { continue }
+            let dayProgress = calculateDayProgress(for: date, sessions: sessions, goalMinutes: goalMinutes)
+
+            // Grace day only applies when user had NO sessions at all
+            if dayProgress.sessionCount == 0 {
+                graceDaysUsed += 1
+            }
+        }
+
+        return graceDaysUsed
+    }
+
+    private func calculateStreaks(sessions: [FocusSession], goalMinutes: Int, graceDaysPerWeek: Int = 0) -> (current: Int, longest: Int) {
         guard !sessions.isEmpty else { return (0, 0) }
 
         // Group sessions by day and calculate minutes per day
@@ -87,17 +113,28 @@ final class StreakService: @unchecked Sendable {
             daySessions.reduce(0) { $0 + $1.actualDuration } / 60
         }
 
+        let sessionCountByDay = sessionsByDay.mapValues { $0.count }
+
         // Sort days
         let sortedDays = minutesByDay.keys.sorted(by: >)
         guard !sortedDays.isEmpty else { return (0, 0) }
 
-        // Calculate current streak (consecutive days from today)
+        // Calculate current streak (consecutive days from today) with grace days
         var currentStreak = 0
         let today = calendar.startOfDay(for: Date())
         var checkDate = today
+        // Track grace days in a rolling 7-day window
+        var recentGraceDays: [Date] = []
 
         while true {
+            let metGoal: Bool
             if let minutes = minutesByDay[checkDate], minutes >= goalMinutes {
+                metGoal = true
+            } else {
+                metGoal = false
+            }
+
+            if metGoal {
                 currentStreak += 1
                 guard let previousDay = calendar.date(byAdding: .day, value: -1, to: checkDate) else { break }
                 checkDate = previousDay
@@ -106,30 +143,95 @@ final class StreakService: @unchecked Sendable {
                 guard let previousDay = calendar.date(byAdding: .day, value: -1, to: checkDate) else { break }
                 checkDate = previousDay
             } else {
+                // Check if this is a grace-eligible day (NO sessions at all)
+                let hadSessions = (sessionCountByDay[checkDate] ?? 0) > 0
+                if !hadSessions && graceDaysPerWeek > 0 {
+                    // Count grace days used in the 7-day window around checkDate
+                    let windowGraceCount = recentGraceDays.filter { graceDate in
+                        let daysBetween = abs(calendar.dateComponents([.day], from: graceDate, to: checkDate).day ?? 0)
+                        return daysBetween < 7
+                    }.count
+
+                    if windowGraceCount < graceDaysPerWeek {
+                        // Use a grace day
+                        recentGraceDays.append(checkDate)
+                        currentStreak += 1
+                        guard let previousDay = calendar.date(byAdding: .day, value: -1, to: checkDate) else { break }
+                        checkDate = previousDay
+                        continue
+                    }
+                }
                 break
             }
         }
 
-        // Calculate longest streak
+        // Calculate longest streak (with grace days)
         var longestStreak = 0
         var tempStreak = 0
-        var lastGoalMetDate: Date?
+        var tempGraceDays: [Date] = []
+        var lastStreakDate: Date?
 
         for day in sortedDays.reversed() {
-            if let minutes = minutesByDay[day], minutes >= goalMinutes {
-                if let lastDate = lastGoalMetDate {
-                    let daysBetween = calendar.dateComponents([.day], from: lastDate, to: day).day ?? 0
-                    if daysBetween == 1 {
+            let metGoal = (minutesByDay[day] ?? 0) >= goalMinutes
+
+            if let lastDate = lastStreakDate {
+                let daysBetween = calendar.dateComponents([.day], from: lastDate, to: day).day ?? 0
+
+                if daysBetween == 1 {
+                    if metGoal {
                         tempStreak += 1
+                    }
+                } else if daysBetween > 1 && graceDaysPerWeek > 0 {
+                    // Check if the gap can be covered by grace days
+                    var canBridge = true
+                    var gapGraceCount = 0
+                    for gapOffset in 1..<daysBetween {
+                        guard let gapDate = calendar.date(byAdding: .day, value: gapOffset, to: lastDate) else {
+                            canBridge = false
+                            break
+                        }
+                        let hadSessions = (sessionCountByDay[gapDate] ?? 0) > 0
+                        if !hadSessions {
+                            let windowCount = tempGraceDays.filter { g in
+                                abs(calendar.dateComponents([.day], from: g, to: gapDate).day ?? 0) < 7
+                            }.count + gapGraceCount
+                            if windowCount < graceDaysPerWeek {
+                                gapGraceCount += 1
+                            } else {
+                                canBridge = false
+                                break
+                            }
+                        } else {
+                            // Had sessions but didn't meet goal — not grace-eligible
+                            canBridge = false
+                            break
+                        }
+                    }
+
+                    if canBridge && metGoal {
+                        tempStreak += daysBetween
+                        // Record grace days used
+                        for gapOffset in 1..<daysBetween {
+                            if let gapDate = calendar.date(byAdding: .day, value: gapOffset, to: lastDate) {
+                                tempGraceDays.append(gapDate)
+                            }
+                        }
                     } else {
-                        tempStreak = 1
+                        tempStreak = metGoal ? 1 : 0
+                        tempGraceDays = []
                     }
                 } else {
-                    tempStreak = 1
+                    tempStreak = metGoal ? 1 : 0
+                    tempGraceDays = []
                 }
-                lastGoalMetDate = day
-                longestStreak = max(longestStreak, tempStreak)
+            } else {
+                tempStreak = metGoal ? 1 : 0
             }
+
+            if metGoal {
+                lastStreakDate = day
+            }
+            longestStreak = max(longestStreak, tempStreak)
         }
 
         return (currentStreak, longestStreak)

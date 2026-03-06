@@ -6,6 +6,7 @@ struct FocusTimerAttributes: ActivityAttributes {
         var endTime: Date
         var label: String
         var isPaused: Bool
+        var isStopwatch: Bool = false
     }
 
     var plannedDuration: Int

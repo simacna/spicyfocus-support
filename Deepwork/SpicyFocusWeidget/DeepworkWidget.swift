@@ -380,10 +380,6 @@ struct FocusTimerLiveActivity: Widget {
                         Text("Paused")
                             .font(.subheadline)
                             .foregroundStyle(.gray)
-                    } else if context.state.isStopwatch {
-                        Text(context.state.endTime, style: .timer)
-                            .font(.system(size: 28, weight: .bold, design: .monospaced))
-                            .foregroundStyle(.white)
                     } else {
                         Text(timerInterval: Date()...context.state.endTime, countsDown: true)
                             .font(.system(size: 28, weight: .bold, design: .monospaced))
@@ -416,10 +412,6 @@ struct FocusTimerLiveActivity: Widget {
                             Text("Paused")
                                 .font(.caption)
                                 .foregroundStyle(.gray)
-                        } else if context.state.isStopwatch {
-                            Text(context.state.endTime, style: .timer)
-                                .font(.system(size: 24, weight: .bold, design: .monospaced))
-                                .foregroundStyle(.orange)
                         } else {
                             Text(timerInterval: Date()...context.state.endTime, countsDown: true)
                                 .font(.system(size: 24, weight: .bold, design: .monospaced))
@@ -440,11 +432,6 @@ struct FocusTimerLiveActivity: Widget {
                 if context.state.isPaused {
                     Image(systemName: "pause.fill")
                         .foregroundStyle(.gray)
-                } else if context.state.isStopwatch {
-                    Text(context.state.endTime, style: .timer)
-                        .font(.system(size: 14, weight: .semibold, design: .monospaced))
-                        .foregroundStyle(.orange)
-                        .frame(width: 50)
                 } else {
                     Text(timerInterval: Date()...context.state.endTime, countsDown: true)
                         .font(.system(size: 14, weight: .semibold, design: .monospaced))

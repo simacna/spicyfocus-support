@@ -3,10 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		06FE0F2A2F54C3B60081C59B /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06FE0F292F54C3B60081C59B /* WidgetKit.framework */; };
+		06FE0F2C2F54C3B60081C59B /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06FE0F2B2F54C3B60081C59B /* SwiftUI.framework */; };
+		06FE0F3B2F54C3B90081C59B /* SpicyFocusWeidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 06FE0F272F54C3B60081C59B /* SpicyFocusWeidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		06FE0F442F54C5FD0081C59B /* FocusTimerActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000041 /* FocusTimerActivity.swift */; };
 		A10000001 /* DeepworkApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000001 /* DeepworkApp.swift */; };
 		A10000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000002 /* ContentView.swift */; };
 		A10000003 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000003 /* Assets.xcassets */; };
@@ -53,9 +57,44 @@
 		A10000044 /* rain.m4a in Resources */ = {isa = PBXBuildFile; fileRef = A20000044 /* rain.m4a */; };
 		A10000045 /* lofi.m4a in Resources */ = {isa = PBXBuildFile; fileRef = A20000045 /* lofi.m4a */; };
 		A10000046 /* ScienceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000046 /* ScienceView.swift */; };
+		A10000047 /* XPService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000047 /* XPService.swift */; };
+		A10000048 /* ConfettiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000048 /* ConfettiView.swift */; };
+		A10000049 /* EnergyCheckInSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000049 /* EnergyCheckInSheet.swift */; };
+		A10000050 /* EnergyCorrelationChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000050 /* EnergyCorrelationChart.swift */; };
+		A10000051 /* MicroCommitmentCompleteSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000051 /* MicroCommitmentCompleteSheet.swift */; };
+		A10000052 /* HyperfocusNudgeOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000052 /* HyperfocusNudgeOverlay.swift */; };
+		A10000053 /* StreakMilestoneSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000053 /* StreakMilestoneSheet.swift */; };
+		A10000054 /* RecommendationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000054 /* RecommendationService.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		06FE0F392F54C3B90081C59B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A90000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 06FE0F262F54C3B60081C59B;
+			remoteInfo = SpicyFocusWeidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		06FE0F3C2F54C3B90081C59B /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				06FE0F3B2F54C3B90081C59B /* SpicyFocusWeidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		06FE0F272F54C3B60081C59B /* SpicyFocusWeidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SpicyFocusWeidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		06FE0F292F54C3B60081C59B /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		06FE0F2B2F54C3B60081C59B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		A20000001 /* DeepworkApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepworkApp.swift; sourceTree = "<group>"; };
 		A20000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		A20000003 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -102,10 +141,41 @@
 		A20000044 /* rain.m4a */ = {isa = PBXFileReference; lastKnownFileType = audio.m4a; path = rain.m4a; sourceTree = "<group>"; };
 		A20000045 /* lofi.m4a */ = {isa = PBXFileReference; lastKnownFileType = audio.m4a; path = lofi.m4a; sourceTree = "<group>"; };
 		A20000046 /* ScienceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScienceView.swift; sourceTree = "<group>"; };
+		A20000047 /* XPService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XPService.swift; sourceTree = "<group>"; };
+		A20000048 /* ConfettiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiView.swift; sourceTree = "<group>"; };
+		A20000049 /* EnergyCheckInSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnergyCheckInSheet.swift; sourceTree = "<group>"; };
+		A20000050 /* EnergyCorrelationChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnergyCorrelationChart.swift; sourceTree = "<group>"; };
+		A20000051 /* MicroCommitmentCompleteSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicroCommitmentCompleteSheet.swift; sourceTree = "<group>"; };
+		A20000052 /* HyperfocusNudgeOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HyperfocusNudgeOverlay.swift; sourceTree = "<group>"; };
+		A20000053 /* StreakMilestoneSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakMilestoneSheet.swift; sourceTree = "<group>"; };
+		A20000054 /* RecommendationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendationService.swift; sourceTree = "<group>"; };
 		A30000001 /* Deepwork.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Deepwork.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		06FE0F3F2F54C3B90081C59B /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 06FE0F262F54C3B60081C59B /* SpicyFocusWeidgetExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		06FE0F2D2F54C3B60081C59B /* SpicyFocusWeidget */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (06FE0F3F2F54C3B90081C59B /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = SpicyFocusWeidget; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
+		06FE0F242F54C3B60081C59B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				06FE0F2C2F54C3B60081C59B /* SwiftUI.framework in Frameworks */,
+				06FE0F2A2F54C3B60081C59B /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A40000001 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -116,10 +186,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		06FE0F282F54C3B60081C59B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				06FE0F292F54C3B60081C59B /* WidgetKit.framework */,
+				06FE0F2B2F54C3B60081C59B /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		A50000001 = {
 			isa = PBXGroup;
 			children = (
 				A50000002 /* Deepwork */,
+				06FE0F2D2F54C3B60081C59B /* SpicyFocusWeidget */,
+				06FE0F282F54C3B60081C59B /* Frameworks */,
 				A50000010 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -162,6 +243,8 @@
 				A20000026 /* StoreService.swift */,
 				A20000038 /* WidgetService.swift */,
 				A20000040 /* SoundscapeService.swift */,
+				A20000047 /* XPService.swift */,
+				A20000054 /* RecommendationService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -188,6 +271,11 @@
 				A20000017 /* SessionCompleteSheet.swift */,
 				A20000027 /* StreakBadge.swift */,
 				A20000028 /* PomodoroControls.swift */,
+				A20000048 /* ConfettiView.swift */,
+				A20000049 /* EnergyCheckInSheet.swift */,
+				A20000051 /* MicroCommitmentCompleteSheet.swift */,
+				A20000052 /* HyperfocusNudgeOverlay.swift */,
+				A20000053 /* StreakMilestoneSheet.swift */,
 			);
 			path = Timer;
 			sourceTree = "<group>";
@@ -230,6 +318,7 @@
 			isa = PBXGroup;
 			children = (
 				A30000001 /* Deepwork.app */,
+				06FE0F272F54C3B60081C59B /* SpicyFocusWeidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -242,6 +331,7 @@
 				A20000031 /* InsightsView.swift */,
 				A20000032 /* HeatmapView.swift */,
 				A20000033 /* CategoryBreakdown.swift */,
+				A20000050 /* EnergyCorrelationChart.swift */,
 			);
 			path = Insights;
 			sourceTree = "<group>";
@@ -268,6 +358,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		06FE0F262F54C3B60081C59B /* SpicyFocusWeidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 06FE0F402F54C3B90081C59B /* Build configuration list for PBXNativeTarget "SpicyFocusWeidgetExtension" */;
+			buildPhases = (
+				06FE0F232F54C3B60081C59B /* Sources */,
+				06FE0F242F54C3B60081C59B /* Frameworks */,
+				06FE0F252F54C3B60081C59B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				06FE0F2D2F54C3B60081C59B /* SpicyFocusWeidget */,
+			);
+			name = SpicyFocusWeidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = SpicyFocusWeidgetExtension;
+			productReference = 06FE0F272F54C3B60081C59B /* SpicyFocusWeidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		A60000001 /* Deepwork */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A80000003 /* Build configuration list for PBXNativeTarget "Deepwork" */;
@@ -275,10 +387,12 @@
 				A70000001 /* Sources */,
 				A40000001 /* Frameworks */,
 				A70000002 /* Resources */,
+				06FE0F3C2F54C3B90081C59B /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				06FE0F3A2F54C3B90081C59B /* PBXTargetDependency */,
 			);
 			name = Deepwork;
 			productName = Deepwork;
@@ -292,9 +406,13 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1500;
+				LastSwiftUpdateCheck = 2620;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
+					06FE0F262F54C3B60081C59B = {
+						CreatedOnToolsVersion = 26.2;
+						LastSwiftMigration = 2620;
+					};
 					A60000001 = {
 						CreatedOnToolsVersion = 15.0;
 					};
@@ -314,11 +432,19 @@
 			projectRoot = "";
 			targets = (
 				A60000001 /* Deepwork */,
+				06FE0F262F54C3B60081C59B /* SpicyFocusWeidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		06FE0F252F54C3B60081C59B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A70000002 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -334,6 +460,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		06FE0F232F54C3B60081C59B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				06FE0F442F54C5FD0081C59B /* FocusTimerActivity.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A70000001 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -379,12 +513,95 @@
 				A10000040 /* SoundscapeService.swift in Sources */,
 				A10000041 /* FocusTimerActivity.swift in Sources */,
 				A10000046 /* ScienceView.swift in Sources */,
+				A10000047 /* XPService.swift in Sources */,
+				A10000048 /* ConfettiView.swift in Sources */,
+				A10000049 /* EnergyCheckInSheet.swift in Sources */,
+				A10000050 /* EnergyCorrelationChart.swift in Sources */,
+				A10000051 /* MicroCommitmentCompleteSheet.swift in Sources */,
+				A10000052 /* HyperfocusNudgeOverlay.swift in Sources */,
+				A10000053 /* StreakMilestoneSheet.swift in Sources */,
+				A10000054 /* RecommendationService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		06FE0F3A2F54C3B90081C59B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 06FE0F262F54C3B60081C59B /* SpicyFocusWeidgetExtension */;
+			targetProxy = 06FE0F392F54C3B90081C59B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		06FE0F3D2F54C3B90081C59B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8FW9PKL436;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SpicyFocusWeidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = SpicyFocusWeidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.spicyfocus.app.SpicyFocusWeidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "SpicyFocusWeidget/SpicyFocusWeidgetExtension-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		06FE0F3E2F54C3B90081C59B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8FW9PKL436;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SpicyFocusWeidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = SpicyFocusWeidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.spicyfocus.app.SpicyFocusWeidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "SpicyFocusWeidget/SpicyFocusWeidgetExtension-Bridging-Header.h";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		B10000001 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -577,6 +794,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		06FE0F402F54C3B90081C59B /* Build configuration list for PBXNativeTarget "SpicyFocusWeidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				06FE0F3D2F54C3B90081C59B /* Debug */,
+				06FE0F3E2F54C3B90081C59B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		A80000001 /* Build configuration list for PBXProject "Deepwork" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

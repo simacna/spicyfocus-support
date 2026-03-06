@@ -46,11 +46,11 @@ struct HistoryView: View {
                 .foregroundStyle(Constants.Colors.accent.opacity(0.8))
 
             VStack(spacing: Constants.Spacing.sm) {
-                Text("Ready to focus?")
+                Text("Your story starts here")
                     .font(.system(size: 28, weight: .bold))
                     .foregroundStyle(Constants.Colors.primaryText)
 
-                Text("Your focus sessions will appear here.\nStart your first session to begin tracking.")
+                Text("Every focus session you complete will show up here — a record of all the times you showed up for yourself.")
                     .font(Constants.Fonts.body)
                     .foregroundStyle(Constants.Colors.secondaryText)
                     .multilineTextAlignment(.center)

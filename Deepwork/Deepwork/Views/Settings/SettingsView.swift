@@ -11,7 +11,7 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             List {
-                if !userSettings.hasProAccess {
+                if !userSettings.isProUser {
                     proSection
                 }
                 timerSection
@@ -19,7 +19,9 @@ struct SettingsView: View {
                     pomodoroSection
                     goalsSection
                 }
+                focusNudgeSection
                 feedbackSection
+                reminderSection
                 appearanceSection
                 aboutSection
                 #if DEBUG
@@ -54,9 +56,15 @@ struct SettingsView: View {
                             .font(Constants.Fonts.headline)
                             .foregroundStyle(Constants.Colors.primaryText)
 
-                        Text("Streaks, insights, widgets & more")
-                            .font(Constants.Fonts.caption)
-                            .foregroundStyle(Constants.Colors.secondaryText)
+                        if userSettings.isInTrial {
+                            Text("Trial active — \(userSettings.trialDaysRemaining) days left")
+                                .font(Constants.Fonts.caption)
+                                .foregroundStyle(Constants.Colors.accent)
+                        } else {
+                            Text("Streaks, insights, widgets & more")
+                                .font(Constants.Fonts.caption)
+                                .foregroundStyle(Constants.Colors.secondaryText)
+                        }
                     }
 
                     Spacer()
@@ -100,6 +108,21 @@ struct SettingsView: View {
             Toggle(isOn: $userSettings.goalsEnabled) {
                 Label("Track Goals", systemImage: "flame")
             }
+
+            Stepper(value: $userSettings.graceDaysPerWeek, in: 0...3) {
+                HStack {
+                    Label("Grace Days/Week", systemImage: "heart.fill")
+                    Spacer()
+                    Text("\(userSettings.graceDaysPerWeek)")
+                        .foregroundStyle(Constants.Colors.secondaryText)
+                }
+            }
+
+            if userSettings.graceDaysPerWeek > 0 {
+                Text("Your streak won't break if you miss up to \(userSettings.graceDaysPerWeek) \(userSettings.graceDaysPerWeek == 1 ? "day" : "days") per week (days with no sessions).")
+                    .font(Constants.Fonts.caption)
+                    .foregroundStyle(Constants.Colors.secondaryText)
+            }
         }
     }
 
@@ -137,6 +160,28 @@ struct SettingsView: View {
         }
     }
 
+    private var focusNudgeSection: some View {
+        Section("Focus Nudge") {
+            Toggle(isOn: $userSettings.hyperfocusNudgeEnabled) {
+                Label("Hyperfocus Nudge", systemImage: "drop.fill")
+            }
+
+            if userSettings.hyperfocusNudgeEnabled {
+                Picker("Interval", selection: $userSettings.hyperfocusNudgeIntervalMinutes) {
+                    Text("15 min").tag(15)
+                    Text("20 min").tag(20)
+                    Text("30 min").tag(30)
+                    Text("45 min").tag(45)
+                    Text("60 min").tag(60)
+                }
+
+                Text("Gently reminds you to stretch, hydrate, or take a break during long sessions.")
+                    .font(Constants.Fonts.caption)
+                    .foregroundStyle(Constants.Colors.secondaryText)
+            }
+        }
+    }
+
     private var feedbackSection: some View {
         Section("Feedback") {
             Toggle(isOn: $userSettings.notificationsEnabled) {
@@ -156,6 +201,35 @@ struct SettingsView: View {
 
             Toggle(isOn: $userSettings.hapticEnabled) {
                 Label("Haptics", systemImage: "hand.tap")
+            }
+        }
+    }
+
+    private var reminderSection: some View {
+        Section("Reminders") {
+            Toggle(isOn: $userSettings.reminderEnabled) {
+                Label("Daily Reminder", systemImage: "bell.badge")
+            }
+            .onChange(of: userSettings.reminderEnabled) { _, isEnabled in
+                if isEnabled {
+                    Task {
+                        await notificationService.requestAuthorization()
+                    }
+                    notificationService.scheduleDailyReminder(at: userSettings.reminderTime)
+                } else {
+                    notificationService.cancelDailyReminder()
+                }
+            }
+
+            if userSettings.reminderEnabled {
+                DatePicker(
+                    "Reminder Time",
+                    selection: $userSettings.reminderTime,
+                    displayedComponents: .hourAndMinute
+                )
+                .onChange(of: userSettings.reminderTime) { _, newTime in
+                    notificationService.scheduleDailyReminder(at: newTime)
+                }
             }
         }
     }

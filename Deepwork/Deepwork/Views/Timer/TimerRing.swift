@@ -4,8 +4,10 @@ struct TimerRing: View {
     let progress: Double
     let remainingSeconds: Int
     let state: TimerState
+    var isStopwatch: Bool = false
 
     @State private var animatedProgress: Double = 0
+    @State private var stopwatchRotation: Double = 0
 
     private let lineWidth: CGFloat = 12
 
@@ -21,25 +23,42 @@ struct TimerRing: View {
                         lineWidth: lineWidth
                     )
 
-                // Progress ring
-                Circle()
-                    .trim(from: 0, to: animatedProgress)
-                    .stroke(
-                        progressColor,
-                        style: StrokeStyle(
-                            lineWidth: lineWidth,
-                            lineCap: .round
+                if isStopwatch {
+                    // Stopwatch animated ring — pulses based on seconds
+                    Circle()
+                        .trim(from: 0, to: Double(remainingSeconds % 60) / 60.0)
+                        .stroke(
+                            progressColor,
+                            style: StrokeStyle(
+                                lineWidth: lineWidth,
+                                lineCap: .round
+                            )
                         )
-                    )
-                    .rotationEffect(.degrees(-90))
-                    .animation(.easeInOut(duration: 0.3), value: animatedProgress)
+                        .rotationEffect(.degrees(-90))
+                        .animation(.easeInOut(duration: 0.3), value: remainingSeconds)
+                } else {
+                    // Countdown progress ring
+                    Circle()
+                        .trim(from: 0, to: animatedProgress)
+                        .stroke(
+                            progressColor,
+                            style: StrokeStyle(
+                                lineWidth: lineWidth,
+                                lineCap: .round
+                            )
+                        )
+                        .rotationEffect(.degrees(-90))
+                        .animation(.easeInOut(duration: 0.3), value: animatedProgress)
+                }
 
                 // Timer display
                 VStack(spacing: Constants.Spacing.xs) {
-                    Text(TimeFormatters.formatTimer(remainingSeconds))
+                    Text(isStopwatch ? TimeFormatters.formatTimerWithHours(remainingSeconds) : TimeFormatters.formatTimer(remainingSeconds))
                         .font(size > 280 ? Constants.Fonts.timerDisplay : Constants.Fonts.timerDisplaySmall)
                         .foregroundStyle(Constants.Colors.primaryText)
                         .monospacedDigit()
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
                         .contentTransition(.numericText())
                         .animation(.default, value: remainingSeconds)
 
@@ -50,6 +69,7 @@ struct TimerRing: View {
                             .textCase(.uppercase)
                     }
                 }
+                .padding(.horizontal, lineWidth + 8)
             }
             .frame(width: size, height: size)
             .position(x: geometry.size.width / 2, y: geometry.size.height / 2)

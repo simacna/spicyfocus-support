@@ -3,8 +3,11 @@ import SwiftUI
 struct SessionCompleteSheet: View {
     let plannedDuration: Int
     let actualDuration: Int
-    let onSave: (String, String) -> Void
+    let onSave: (String, String, Bool) -> Void
     let onDiscard: () -> Void
+    var isStopwatch: Bool = false
+    var intention: String = ""
+    var preselectedLabel: String = ""
 
     @EnvironmentObject private var userSettings: UserSettings
 
@@ -12,9 +15,11 @@ struct SessionCompleteSheet: View {
     @State private var customLabel: String = ""
     @State private var notes: String = ""
     @State private var showingCustomLabel = false
+    @State private var intentionCompleted = false
+    @State private var scienceNugget = Constants.ScienceNuggets.random()
 
     private var wasCompleted: Bool {
-        actualDuration >= plannedDuration
+        isStopwatch || actualDuration >= plannedDuration
     }
 
     private var finalLabel: String {
@@ -28,6 +33,10 @@ struct SessionCompleteSheet: View {
                     completionHeader
 
                     durationSummary
+
+                    if !intention.isEmpty {
+                        intentionSection
+                    }
 
                     labelSection
 
@@ -47,7 +56,7 @@ struct SessionCompleteSheet: View {
 
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
-                        onSave(finalLabel, notes)
+                        onSave(finalLabel, notes, intentionCompleted)
                     }
                     .fontWeight(.semibold)
                 }
@@ -56,7 +65,9 @@ struct SessionCompleteSheet: View {
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
         .onAppear {
-            if let firstLabel = userSettings.quickLabels.first {
+            if !preselectedLabel.isEmpty {
+                selectedLabel = preselectedLabel
+            } else if let firstLabel = userSettings.quickLabels.first {
                 selectedLabel = firstLabel
             }
         }
@@ -68,9 +79,15 @@ struct SessionCompleteSheet: View {
                 .font(.system(size: 56))
                 .foregroundStyle(wasCompleted ? Constants.Colors.success : Constants.Colors.warning)
 
-            Text(wasCompleted ? "Great work!" : "Session ended early")
+            Text(wasCompleted ? "Great work!" : "Every minute counts")
                 .font(Constants.Fonts.title)
                 .foregroundStyle(Constants.Colors.primaryText)
+
+            Text(scienceNugget)
+                .font(Constants.Fonts.caption)
+                .foregroundStyle(Constants.Colors.secondaryText)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, Constants.Spacing.md)
         }
         .padding(.top, Constants.Spacing.md)
     }
@@ -81,12 +98,12 @@ struct SessionCompleteSheet: View {
                 Text(TimeFormatters.formatDuration(actualDuration / 60))
                     .font(Constants.Fonts.title)
                     .foregroundStyle(Constants.Colors.primaryText)
-                Text("Focused")
+                Text(isStopwatch ? "Total Time" : "Focused")
                     .font(Constants.Fonts.caption)
                     .foregroundStyle(Constants.Colors.secondaryText)
             }
 
-            if !wasCompleted {
+            if !wasCompleted && !isStopwatch {
                 VStack(spacing: Constants.Spacing.xs) {
                     Text(TimeFormatters.formatDuration(plannedDuration / 60))
                         .font(Constants.Fonts.title)
@@ -143,6 +160,36 @@ struct SessionCompleteSheet: View {
                     }
                 }
             }
+        }
+    }
+
+    private var intentionSection: some View {
+        VStack(alignment: .leading, spacing: Constants.Spacing.sm) {
+            Text("Your Intention")
+                .font(Constants.Fonts.headline)
+                .foregroundStyle(Constants.Colors.primaryText)
+
+            Button {
+                intentionCompleted.toggle()
+            } label: {
+                HStack(spacing: Constants.Spacing.md) {
+                    Image(systemName: intentionCompleted ? "checkmark.circle.fill" : "circle")
+                        .font(.system(size: 24))
+                        .foregroundStyle(intentionCompleted ? Constants.Colors.success : Constants.Colors.secondaryText)
+
+                    Text(intention)
+                        .font(Constants.Fonts.body)
+                        .foregroundStyle(Constants.Colors.primaryText)
+                        .strikethrough(intentionCompleted)
+                        .multilineTextAlignment(.leading)
+
+                    Spacer()
+                }
+                .padding(Constants.Spacing.md)
+                .background(Constants.Colors.secondaryBackground)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+            }
+            .buttonStyle(.plain)
         }
     }
 
@@ -237,8 +284,9 @@ struct FlowLayout: Layout {
     SessionCompleteSheet(
         plannedDuration: 1500,
         actualDuration: 1500,
-        onSave: { _, _ in },
-        onDiscard: {}
+        onSave: { _, _, _ in },
+        onDiscard: {},
+        intention: "Write intro paragraph"
     )
     .environmentObject(UserSettings())
 }

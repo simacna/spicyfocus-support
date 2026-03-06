@@ -8,20 +8,26 @@ struct OnboardingView: View {
         OnboardingPage(
             icon: "brain.head.profile",
             title: "Your Brain Isn't Broken",
-            description: "ADHD means your brain regulates focus differently — not less. Research shows you can hyperfocus for hours on the right task. Spicy Focus helps you channel that power.",
+            description: "ADHD means your brain regulates focus differently — not less. Research shows you can hyperfocus for hours on the right task. Spicy Focus helps you channel that power.\n\n— Volkow et al., NIDA brain imaging studies",
             accentColor: .orange
         ),
         OnboardingPage(
             icon: "clock.arrow.circlepath",
             title: "Make Time Visible",
-            description: "Time blindness is a real neurological symptom, not a character flaw. Visual timers and ambient sounds give your brain the external cues it needs to stay anchored.",
+            description: "Time blindness is a real neurological symptom, not a character flaw. Visual timers and ambient sounds give your brain the external cues it needs to stay anchored.\n\n— Barkley, R.A.; Soderlund et al. (2024 meta-analysis)",
             accentColor: .blue
         ),
         OnboardingPage(
             icon: "flame",
             title: "Small Wins, Big Dopamine",
-            description: "Your brain's reward system needs more frequent wins. Streaks, progress tracking, and session stats give you the immediate feedback your brain craves.",
+            description: "Your brain's reward system needs more frequent wins. Streaks, progress tracking, and session stats give you the immediate feedback your brain craves.\n\n— Volkow et al., dopamine receptor availability in ADHD",
             accentColor: .red
+        ),
+        OnboardingPage(
+            icon: "sparkles",
+            title: "Built for Your Brain",
+            description: "Set an intention before each session to activate goal-pursuit. Try the 5-minute rule to bypass the starting barrier. Let nudges keep you anchored. Use grace days to protect your streak on off days — because consistency isn't about perfection.\n\n— Gollwitzer (1999); Barkley on external scaffolding",
+            accentColor: .purple
         )
     ]
 

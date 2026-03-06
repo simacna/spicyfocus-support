@@ -22,6 +22,15 @@ struct InsightsView: View {
         case year = "Year"
     }
 
+    private var availableTimeRanges: [TimeRange] {
+        guard let oldest = sessions.last?.startTime else { return [.week] }
+        let daysSinceOldest = Calendar.current.dateComponents([.day], from: oldest, to: Date()).day ?? 0
+        var ranges: [TimeRange] = [.week]
+        if daysSinceOldest > 7 { ranges.append(.month) }
+        if daysSinceOldest > 30 { ranges.append(.year) }
+        return ranges
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -68,8 +77,10 @@ struct InsightsView: View {
         let goalMinutes = userSettings.dailyGoalMinutes
         let sessionsCopy = Array(sessions)
 
+        let graceDays = userSettings.graceDaysPerWeek
+
         let calculatedStreak = await Task.detached {
-            StreakService().calculateStreakInfo(sessions: sessionsCopy, goalMinutes: goalMinutes)
+            StreakService().calculateStreakInfo(sessions: sessionsCopy, goalMinutes: goalMinutes, graceDaysPerWeek: graceDays)
         }.value
 
         let calculatedRecords = await Task.detached {
@@ -110,12 +121,23 @@ struct InsightsView: View {
             proEmptyState
         } else if let streak = streakInfo, let records = personalRecords {
             VStack(spacing: Constants.Spacing.lg) {
+                // XP Level Card
+                XPLevelCard(totalXP: userSettings.totalXP)
+
                 // Streak and Goal Summary
                 HStack(spacing: Constants.Spacing.md) {
-                    StreakBadgeLarge(
-                        streak: streak.currentStreak,
-                        longestStreak: streak.longestStreak
-                    )
+                    VStack(spacing: Constants.Spacing.xs) {
+                        StreakBadgeLarge(
+                            streak: streak.currentStreak,
+                            longestStreak: streak.longestStreak
+                        )
+
+                        if userSettings.graceDaysPerWeek > 0 {
+                            Text("\(streak.graceDaysRemaining) grace \(streak.graceDaysRemaining == 1 ? "day" : "days") left")
+                                .font(Constants.Fonts.caption)
+                                .foregroundStyle(Constants.Colors.secondaryText)
+                        }
+                    }
 
                     GoalProgressView(
                         minutesFocused: streak.todayProgress.minutesFocused,
@@ -125,12 +147,19 @@ struct InsightsView: View {
                 }
 
                 // Time Range Picker
-                Picker("Time Range", selection: $selectedTimeRange) {
-                    ForEach(TimeRange.allCases, id: \.self) { range in
-                        Text(range.rawValue).tag(range)
+                if availableTimeRanges.count > 1 {
+                    Picker("Time Range", selection: $selectedTimeRange) {
+                        ForEach(availableTimeRanges, id: \.self) { range in
+                            Text(range.rawValue).tag(range)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .onChange(of: availableTimeRanges) { _, ranges in
+                        if !ranges.contains(selectedTimeRange) {
+                            selectedTimeRange = .week
+                        }
                     }
                 }
-                .pickerStyle(.segmented)
 
                 // Stats for selected range
                 timeRangeStats
@@ -140,6 +169,9 @@ struct InsightsView: View {
 
                 // Category Breakdown
                 CategoryBreakdown(sessions: filteredSessions)
+
+                // Energy Correlation
+                EnergyCorrelationChart(sessions: filteredSessions)
 
                 // Personal Records
                 PersonalRecordsCard(records: records)
@@ -159,11 +191,11 @@ struct InsightsView: View {
                 .foregroundStyle(Constants.Colors.accent.opacity(0.8))
 
             VStack(spacing: Constants.Spacing.sm) {
-                Text("Your insights await")
+                Text("Your patterns are forming")
                     .font(.system(size: 28, weight: .bold))
                     .foregroundStyle(Constants.Colors.primaryText)
 
-                Text("Complete focus sessions to unlock\nyour productivity patterns and streaks.")
+                Text("Every session teaches us something about your focus.\nStart one and we'll show you what we learn.")
                     .font(Constants.Fonts.body)
                     .foregroundStyle(Constants.Colors.secondaryText)
                     .multilineTextAlignment(.center)
@@ -175,7 +207,7 @@ struct InsightsView: View {
                     .font(Constants.Fonts.headline)
                     .foregroundStyle(Constants.Colors.primaryText)
 
-                Text("Reach your goal to start a streak")
+                Text("Reach your goal and your streak begins")
                     .font(Constants.Fonts.caption)
                     .foregroundStyle(Constants.Colors.secondaryText)
             }
@@ -359,6 +391,80 @@ struct RecordItem: View {
                     .foregroundStyle(Constants.Colors.secondaryText)
             }
         }
+    }
+}
+
+// MARK: - XP Level Card
+
+struct XPLevelCard: View {
+    let totalXP: Int
+
+    private var xpResult: XPResult {
+        XPService.getXPResult(totalXP: totalXP)
+    }
+
+    var body: some View {
+        VStack(spacing: Constants.Spacing.md) {
+            HStack {
+                VStack(alignment: .leading, spacing: Constants.Spacing.xs) {
+                    HStack(spacing: Constants.Spacing.sm) {
+                        Image(systemName: "bolt.fill")
+                            .font(.system(size: 20))
+                            .foregroundStyle(Constants.Colors.accent)
+
+                        Text("Level \(xpResult.level.level)")
+                            .font(Constants.Fonts.title)
+                            .foregroundStyle(Constants.Colors.primaryText)
+                    }
+
+                    Text(xpResult.level.title)
+                        .font(Constants.Fonts.headline)
+                        .foregroundStyle(Constants.Colors.accent)
+                }
+
+                Spacer()
+
+                VStack(alignment: .trailing, spacing: Constants.Spacing.xs) {
+                    Text("\(totalXP) XP")
+                        .font(Constants.Fonts.headline)
+                        .foregroundStyle(Constants.Colors.primaryText)
+
+                    if xpResult.level.level < XPService.levels.count {
+                        Text("\(xpResult.xpInCurrentLevel)/\(xpResult.level.xpRequired) to next")
+                            .font(Constants.Fonts.caption)
+                            .foregroundStyle(Constants.Colors.secondaryText)
+                    } else {
+                        Text("Max Level!")
+                            .font(Constants.Fonts.caption)
+                            .foregroundStyle(Constants.Colors.accent)
+                    }
+                }
+            }
+
+            // XP Progress Bar
+            GeometryReader { geometry in
+                ZStack(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(Constants.Colors.secondaryText.opacity(0.2))
+                        .frame(height: 12)
+
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(
+                            LinearGradient(
+                                colors: [Constants.Colors.accent, Constants.Colors.accent.opacity(0.7)],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .frame(width: geometry.size.width * xpResult.progressInLevel, height: 12)
+                        .animation(.easeInOut(duration: 0.5), value: xpResult.progressInLevel)
+                }
+            }
+            .frame(height: 12)
+        }
+        .padding(Constants.Spacing.md)
+        .background(Constants.Colors.secondaryBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }
 

@@ -59,4 +59,19 @@ final class HapticService {
         let selectionGenerator = UISelectionFeedbackGenerator()
         selectionGenerator.selectionChanged()
     }
+
+    func playCelebration() {
+        guard isEnabled else { return }
+        // Burst pattern: heavy, light, heavy for dopamine hit
+        heavyGenerator.impactOccurred()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [self] in
+            lightGenerator.impactOccurred()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [self] in
+            heavyGenerator.impactOccurred()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { [self] in
+            notificationGenerator.notificationOccurred(.success)
+        }
+    }
 }
